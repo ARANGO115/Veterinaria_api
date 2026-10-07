@@ -4,23 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "start": "node src/server.js",
-  "dev": "nodemon src/server.js",
-  "test": "jest --passWithNoTests",
-  "test:watch": "jest --watch"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DeiviDiaz/veterinaria-api.git"
+    "url": "git+https://github.com/ARANGO115/Veterinaria_api.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/DeiviDiaz/veterinaria-api/issues"
+    "url": "https://github.com/ARANGO115/Veterinaria_api/issues"
   },
-  "homepage": "https://github.com/DeiviDiaz/veterinaria-api#readme",
+  "homepage": "https://github.com/ARANGO115/Veterinaria_api#readme",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
