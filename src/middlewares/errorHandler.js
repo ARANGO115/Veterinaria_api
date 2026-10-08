@@ -1,23 +1,34 @@
-const logger = require('../utils/logger');
-
-const errorHandler = (error, req, res, next) => {
-  if (res.headersSent) {
-    return next(error);
+const errorHandler = (error, _req, res, _next) => {
+  if (error.code === 11000) {
+    return res.status(409).json({
+      success: false,
+      message: 'Ya existe un usuario registrado con ese correo electrónico'
+    });
   }
 
-  logger.error('Error procesando la solicitud', error);
+  if (error.name === 'ValidationError' || error.name === 'CastError') {
+    const errors = error.name === 'ValidationError'
+      ? Object.values(error.errors).map(validationError => validationError.message)
+      : [error.message];
 
-  const requestedStatus = error.statusCode || error.status;
-  const statusCode = Number.isInteger(requestedStatus)
-    && requestedStatus >= 400
-    && requestedStatus <= 599
-    ? requestedStatus
-    : 500;
-  res.status(statusCode).json({
+    return res.status(400).json({
+      success: false,
+      message: 'Datos inválidos',
+      errors
+    });
+  }
+
+  if (error instanceof SyntaxError && error.status === 400 && 'body' in error) {
+    return res.status(400).json({
+      success: false,
+      message: 'El cuerpo de la solicitud contiene JSON inválido'
+    });
+  }
+
+  console.error('Error al procesar la solicitud:', error);
+  return res.status(500).json({
     success: false,
-    message: statusCode >= 500 && process.env.NODE_ENV === 'production'
-      ? 'Error interno del servidor'
-      : error.message
+    message: 'Ocurrió un error interno'
   });
 };
 
