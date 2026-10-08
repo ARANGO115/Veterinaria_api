@@ -2,6 +2,17 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+const registerUser = async ({ name, email, password }) => {
+  const user = new User({ name, email, password });
+  await user.save();
+
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email
+  };
+};
+
 const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email: email.trim().toLowerCase() }).select('+password');
 
@@ -29,4 +40,4 @@ const loginUser = async ({ email, password }) => {
   };
 };
 
-module.exports = { loginUser };
+module.exports = { registerUser, loginUser };
