@@ -33,6 +33,20 @@ Al autenticar correctamente responde con `200`, los datos públicos del usuario
 y un token JWT. Las credenciales incorrectas responden con `401`; los datos
 inválidos responden con `400`. Configura `JWT_SECRET` y, opcionalmente,
 `JWT_EXPIRES_IN` en el archivo de entorno.
+
+## Rutas protegidas
+
+`GET /api/health` requiere un token JWT válido. Envíalo en el encabezado
+`Authorization` usando el esquema Bearer:
+
+```text
+Authorization: Bearer <token>
+```
+
+Las solicitudes sin token, con un esquema distinto o con un token inválido o
+expirado responden con `401`. Las rutas `/api/auth/register` y
+`/api/auth/login` permanecen públicas para permitir el registro y la
+autenticación.
 ## Conectar con MongoDB Atlas
 
 1. En MongoDB Atlas, crea un usuario de base de datos y agrega la IP desde la que
@@ -60,6 +74,7 @@ src/
 ├── controllers/
 │   └── healthController.js
 ├── middlewares/
+│   ├── authMiddleware.js
 │   └── errorHandler.js
 ├── models/
 ├── routes/
