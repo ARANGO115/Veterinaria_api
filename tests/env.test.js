@@ -2,7 +2,12 @@ jest.mock('node:dns', () => ({
   setServers: jest.fn()
 }));
 
+jest.mock('dotenv', () => ({
+  config: jest.fn(() => ({ parsed: {} }))
+}));
+
 const dns = require('node:dns');
+const dotenv = require('dotenv');
 const loadEnvironment = require('../src/config/env');
 
 describe('Configuración del entorno y DNS', () => {
@@ -10,6 +15,8 @@ describe('Configuración del entorno y DNS', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    dotenv.config.mockReturnValue({ parsed: {} });
+    delete process.env.MONGODB_DNS_SERVERS;
   });
 
   afterAll(() => {
@@ -34,6 +41,7 @@ describe('Configuración del entorno y DNS', () => {
     expect(() => loadEnvironment()).toThrow(
       'MONGODB_DNS_SERVERS contiene una dirección inválida'
     );
+
     expect(dns.setServers).not.toHaveBeenCalled();
   });
 
