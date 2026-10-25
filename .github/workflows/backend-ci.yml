@@ -5,6 +5,7 @@ on:
     branches:
       - develop
       - "SDGV-46-configurar-el-pipeline-de-ci-con-git-hub-actions"
+      - "SDGV-47-validar-y-documentar-el-funcionamiento-del-pipeline"
 
   pull_request:
     branches:
