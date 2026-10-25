@@ -10,7 +10,10 @@
     "test:unit": "jest --runInBand tests/authService.test.js tests/authMiddleware.test.js tests/jwt.test.js",
     "test:integration": "jest --runInBand tests/auth.test.js tests/health.test.js",
     "test:watch": "jest --watch",
-    "test:ci": "jest --runInBand --coverage"
+    "test:ci": "jest --runInBand --coverage",
+    "postman:prepare": "node -e \"require('fs').mkdirSync('reports', { recursive: true })\"",
+    "postman:run": "npm run postman:prepare && newman run postman/Veterinaria-API.postman_collection.json -e postman/Veterinaria-API.local.postman_environment.json --reporters cli,junit --reporter-junit-export reports/newman-results.xml",
+    "postman:run:ci": "npm run postman:prepare && newman run postman/Veterinaria-API.postman_collection.json -e postman/Veterinaria-API.local.postman_environment.json --bail --reporters cli,junit --reporter-junit-export reports/newman-results.xml"
   },
   "repository": {
     "type": "git",
@@ -38,6 +41,7 @@
   },
   "devDependencies": {
     "jest": "^30.5.2",
+    "newman": "^6.2.3",
     "nodemon": "^3.1.14",
     "supertest": "^7.3.0"
   }

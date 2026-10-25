@@ -52,24 +52,55 @@ Se verificó la exportación localmente:
 - 10 de 10 solicitudes contienen scripts de pruebas.
 - Todas las variables usadas (`baseUrl`, `registeredEmail`,
   `registeredPassword`, `authToken` e `invalidToken`) están declaradas.
-- La suite Jest existente continúa aprobada: 5 suites y 31 pruebas.
+- La suite Jest existente continúa aprobada: 6 suites y 34 pruebas.
 - Ejecución HTTP real con Newman contra MongoDB Atlas: 10 solicitudes, 19
   aserciones y 0 fallos.
+- Reporte JUnit generado en `reports/newman-results.xml`.
+- Una ejecución contra un puerto inválido devolvió código de salida `1`, por
+  lo que los errores de conexión producen una ejecución fallida.
 
 Durante la primera ejecución se detectó y corrigió un conflicto de precedencia
 entre variables de colección y de entorno: `registeredEmail` y `authToken` se
 guardan ahora en ambos alcances para que la colección funcione igual desde
 Postman y Newman.
 
-## Newman (opcional)
+## Newman desde la línea de comandos
 
-Con Newman instalado, la misma colección puede ejecutarse desde la terminal:
+Newman está declarado en `devDependencies`, por lo que `npm install` instala
+la versión reproducible usada por el proyecto. Los comandos disponibles son:
 
 ```bash
-newman run postman/Veterinaria-API.postman_collection.json \
-  -e postman/Veterinaria-API.local.postman_environment.json
+npm run postman:run
+npm run postman:run:ci
 ```
 
-El comando devuelve código distinto de cero si una prueba falla. La ejecución
-requiere que la API y MongoDB estén disponibles; no forma parte de GitHub
-Actions en este alcance.
+Ambos comandos ejecutan la colección y el entorno exportados. Además generan
+`reports/newman-results.xml` en formato JUnit. La carpeta `reports/` está
+ignorada por Git para no subir resultados generados.
+
+Para usar otra URL sin editar la colección o el entorno:
+
+```bash
+npm run postman:run -- --env-var "baseUrl=http://localhost:4000"
+```
+
+En PowerShell se puede ejecutar directamente:
+
+```powershell
+npx newman run postman\Veterinaria-API.postman_collection.json `
+  -e postman\Veterinaria-API.local.postman_environment.json `
+  --env-var "baseUrl=http://localhost:4000" `
+  --reporters cli,junit `
+  --reporter-junit-export reports\newman-results.xml
+```
+
+`postman:run:ci` agrega `--bail` para detenerse ante el primer fallo. Newman
+devuelve un código de salida distinto de cero cuando no puede conectarse al
+backend, falla una aserción o se produce un error de ejecución; esto permite
+que un pipeline futuro detecte la ejecución fallida. GitHub Actions queda
+fuera del alcance de esta tarea.
+
+La ejecución requiere que la API esté iniciada y que MongoDB Atlas permita la
+IP del equipo. `JWT_SECRET` y `MONGODB_URI` se configuran únicamente en el
+`.env` local, que está ignorado por Git y nunca se pasan como argumentos de
+Newman.
