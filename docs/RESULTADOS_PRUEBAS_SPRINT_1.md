@@ -1,92 +1,56 @@
-# Resultados de Pruebas - Sprint 1
+# Resultados de pruebas de autenticación
 
-## 1. Objetivo
+## Entorno reproducible
 
-Documentar los resultados de las pruebas realizadas sobre la API de la veterinaria, conservando evidencias que permitan verificar el cumplimiento de los objetivos del Sprint 1.
+- Node.js y npm definidos por las dependencias del proyecto.
+- Jest 30 y Supertest 7.
+- `NODE_ENV=test` no requiere configuración de MongoDB.
+- Las pruebas unitarias mockean `User`, `bcryptjs`, `jsonwebtoken` y la
+  verificación de tokens.
+- Las pruebas de integración ejercitan la aplicación Express con Supertest y
+  mockean `authService`.
 
-## 2. Entorno de pruebas
+## Escenarios ejecutados
 
-- Lenguaje: JavaScript
-- Plataforma: Node.js
-- Framework: Express
-- Framework de pruebas: Jest
-- Herramienta para pruebas HTTP: Supertest
-- Base de datos configurada: MongoDB
-- Comando utilizado: `npm test`
+| Suite | Enfoque | Escenarios |
+|---|---|---|
+| `authService.test.js` | Bottom-up | registro, login válido, usuario inexistente, contraseña incorrecta y secreto JWT ausente |
+| `authMiddleware.test.js` | Bottom-up | encabezado ausente/incorrecto, token válido e inválido |
+| `jwt.test.js` | Bottom-up | firma válida, firma inválida y token expirado |
+| `auth.test.js` | Top-down | registro, login, validaciones 400, credenciales 401 y correo duplicado 409 |
+| `health.test.js` | Top-down | ruta protegida sin token, esquema inválido, token inválido y token válido |
 
-## 3. Pruebas unitarias
+El enfoque **Bottom-up** parte de las unidades internas (servicio, middleware
+y utilidad JWT) y verifica sus contratos de forma aislada. El enfoque
+**Top-down** parte de las rutas HTTP y atraviesa validadores, controladores y
+middleware hasta comprobar la respuesta observable de la API.
 
-Actualmente no se encontraron pruebas unitarias implementadas en el repositorio correspondiente al Sprint 1.
+## Resultados y defectos corregidos
 
-El único archivo de pruebas disponible es `tests/health.test.js`, el cual realiza pruebas de integración sobre el endpoint `/api/health`.
+La ejecución se realiza con:
 
-Por lo tanto, no se registran resultados de pruebas unitarias que no hayan sido ejecutadas.
+```bash
+npm test
+```
 
-## 4. Pruebas de integración
+Resultado obtenido: **5 suites aprobadas, 31 pruebas aprobadas y 0 fallos**.
+La ejecución con `npm run test:ci` también fue aprobada y produjo 86.3% de
+cobertura de statements y 73.33% de cobertura de branches, sin conexión a
+servicios externos. Durante la preparación se corrigieron:
 
-### Caso 1: GET /api/health - Respuesta correcta
+1. El script de prueba no ofrecía comandos diferenciados para unitarias,
+   integración y CI.
+2. `tests/health.test.js` tenía truncado el valor del encabezado
+   `Authorization`, lo que impedía analizar la prueba.
+3. La documentación del Sprint 1 indicaba que no existían pruebas unitarias y
+   no describía los flujos de autenticación actuales.
 
-**Objetivo:** verificar que la API responda correctamente cuando el endpoint de salud está disponible.
+## Criterios cubiertos
 
-**Solicitud:** `GET /api/health`
-
-**Resultado esperado:**
-
-- Código HTTP: `200`
-- `success`: `true`
-- Mensaje: `Veterinaria API funcionando correctamente`
-
-**Resultado obtenido:** APROBADO.
-
-### Caso 2: GET /api/endpoint-inexistente - Endpoint no existente
-
-**Objetivo:** verificar el comportamiento de la API cuando se solicita un endpoint que no existe.
-
-**Solicitud:** `GET /api/endpoint-inexistente`
-
-**Resultado esperado:**
-
-- Código HTTP: `404`
-
-**Resultado obtenido:** APROBADO.
-
-## 5. Resumen de resultados
-
-| Tipo de prueba | Casos ejecutados | Aprobados | Fallidos |
-|---|---:|---:|---:|
-| Pruebas unitarias | 0 | 0 | 0 |
-| Pruebas de integración | 2 | 2 | 0 |
-| **Total** | **2** | **2** | **0** |
-
-## 6. Evidencia de ejecución
-
-Las pruebas fueron ejecutadas mediante el comando:
-
-`npm test`
-
-Resultado:
-
-- Suite de pruebas: 1 aprobada.
-- Pruebas ejecutadas: 2.
-- Pruebas aprobadas: 2.
-- Pruebas fallidas: 0.
-
-La salida de `npm test` queda registrada como evidencia de la ejecución de las pruebas del Sprint 1.
-
-## 7. Casos de error
-
-Se validó un escenario de error mediante una solicitud a un endpoint inexistente.
-
-El sistema respondió con código HTTP `404`, por lo que el comportamiento esperado fue validado correctamente.
-
-No se presentaron fallos durante la ejecución de las pruebas.
-
-## 8. Conclusión
-
-Las pruebas de integración disponibles para el Sprint 1 fueron ejecutadas correctamente.
-
-Se realizaron dos casos de prueba: un caso exitoso para `GET /api/health` y un caso de error para un endpoint inexistente.
-
-Ambos casos fueron aprobados, obteniendo un resultado de 2 pruebas aprobadas de 2 ejecutadas.
-
-Actualmente no existen pruebas unitarias en el repositorio revisado, por lo que no se registran resultados de este tipo.
+- Jest se ejecuta mediante `test`, `test:unit`, `test:integration` y `test:ci`.
+- Se cubren entradas válidas, inválidas y errores 401, 409 y configuración
+  ausente.
+- Registro, inicio de sesión y protección de rutas tienen escenarios de
+  integración identificables.
+- La ausencia de MongoDB durante las pruebas evita dependencia de datos
+  persistentes y permite ejecuciones repetibles.

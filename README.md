@@ -85,3 +85,28 @@ src/
 ```
 
 El endpoint `GET /api/health` sirve para verificar que la API esté activa.
+
+## Pruebas automatizadas
+
+Las pruebas no requieren conexión a MongoDB: las pruebas de integración
+mockean el servicio de autenticación y las pruebas unitarias aíslan el modelo,
+bcrypt y JWT para que los resultados sean repetibles.
+
+```bash
+npm test
+npm run test:unit
+npm run test:integration
+npm run test:ci
+```
+
+La suite unitaria cubre `authService`, `authMiddleware` y la validación de
+tokens. La suite de integración cubre registro, inicio de sesión, validación
+de entradas y acceso protegido a `/api/health`.
+
+## Colección Postman
+
+La colección exportada de pruebas HTTP y su entorno local están disponibles
+en `postman/`. Consulta [docs/POSTMAN.md](docs/POSTMAN.md) para importar,
+configurar y ejecutar las solicitudes automatizadas de registro, login y
+rutas protegidas. Newman también puede ejecutarlas desde la línea de comandos
+con `npm run postman:run`.
