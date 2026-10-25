@@ -10,6 +10,13 @@ const healthRoutes = require('./routes/healthRoutes');
 const logger = require('./utils/logger');
 
 const app = express();
+const apiRateLimitMax = process.env.API_RATE_LIMIT_MAX === undefined
+  ? 100
+  : Number(process.env.API_RATE_LIMIT_MAX);
+
+if (!Number.isSafeInteger(apiRateLimitMax) || apiRateLimitMax < 1) {
+  throw new Error('API_RATE_LIMIT_MAX debe ser un entero positivo.');
+}
 
 app.use(helmet());
 app.use(cors());
@@ -17,7 +24,7 @@ app.use(express.json({ limit: '10kb' }));
 
 app.use('/api', rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 100,
+  limit: apiRateLimitMax,
   standardHeaders: 'draft-8',
   legacyHeaders: false,
   handler: (req, res) => {

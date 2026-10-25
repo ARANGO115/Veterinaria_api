@@ -20,6 +20,7 @@ No se incluye `POST /api/auth/register`: cada solicitud crea datos persistentes 
 - El plan espera 1 segundo antes de cada solicitud y repite una pareja (salud y login) durante la duración configurada. Con 10 usuarios, el ritmo máximo teórico es aproximadamente 5 solicitudes por segundo en total; la latencia real lo reduce. Detener la prueba si afecta al entorno.
 - Cada endpoint comprueba que la respuesta HTTP sea `200`, para que respuestas como `401`, `429` o `5xx` se contabilicen como errores.
 - Las pruebas no imponen umbrales de rendimiento. Registrar las métricas observadas y compararlas entre ejecuciones equivalentes.
+- La API limita `/api` a 100 solicitudes por ventana de 15 minutos por defecto. Para la demostración local, se puede aumentar mediante `API_RATE_LIMIT_MAX` en `.env.development`; el valor predeterminado de producción no cambia. No subas este valor a producción como parte de la prueba.
 
 ## Escenarios propuestos
 
@@ -38,7 +39,7 @@ Solo aumentar la carga después de revisar el resultado y confirmar que el entor
 1. Instalar Apache JMeter 5.6.3 y Java. Si Java no se detecta automáticamente, definir `JAVA_HOME` a la carpeta de instalación antes de ejecutar JMeter.
 2. Iniciar la API con la configuración de base de datos del entorno controlado y confirmar que la API está disponible. En esta versión, `GET /api/health` requiere un token Bearer, que el plan obtiene al iniciar sesión.
 3. Crear previamente una cuenta dedicada de prueba y comprobar que puede iniciar sesión.
-4. Configurar las variables locales `JMETER_LOGIN_EMAIL` y `JMETER_LOGIN_PASSWORD` para la cuenta de aplicación de prueba. El plan las lee del entorno del proceso; no se pasan como argumentos `-J` ni se guardan en el `.jmx`. No compartas la contraseña. El usuario de base de datos de Atlas no sustituye la cuenta de aplicación que se autentica en `/api/auth/login`.
+4. Guardar las propiedades locales `JMETER_LOGIN_EMAIL` y `JMETER_LOGIN_PASSWORD` en `performance/.env.local`. El plan las carga con `-q`; no se pasan como argumentos de línea de comandos ni se guardan en el `.jmx`. No compartas la contraseña. El usuario de base de datos de Atlas no sustituye la cuenta de aplicación que se autentica en `/api/auth/login`.
 5. Crear una carpeta local para los artefactos de ejecución:
 
 ```powershell
@@ -47,40 +48,28 @@ New-Item -ItemType Directory -Force .\performance\results | Out-Null
 
 En Windows, el servidor obtiene automáticamente los DNS configurados en adaptadores activos para resolver los registros SRV/TXT de Atlas. No se requiere configurar DNS manualmente en el proyecto. Si la API no conecta con Atlas, verifica que el cluster esté activo, que la IP pública actual esté permitida en **Security > Network Access** y que el usuario de base de datos y la cadena de conexión correspondan al cluster. No desactives TLS para sortear errores de conexión.
 
+Para ejecutar los tres perfiles propuestos (1 usuario/60 s, 5 usuarios/120 s y 10 usuarios/120 s) dentro de una misma ventana de 15 minutos, configura `API_RATE_LIMIT_MAX=2000` únicamente en `.env.development` del entorno local de demostración. Este número es un margen operativo para el plan y no un umbral de rendimiento. Reinicia la API después de cambiarlo, registra el valor usado y restaura/elimina la variable al terminar para volver al límite predeterminado de 100. El límite aplica por IP y cuenta todas las rutas `/api`.
+
 ## Ejecución
 
-Desde la raíz del repositorio, cargar las credenciales de prueba en variables de entorno de la sesión PowerShell (sin escribirlas en la línea de comandos ni en el historial) y ajustar los parámetros del perfil:
+Desde la raíz del repositorio, asegúrate de que `performance/.env.local` tenga las propiedades locales de la cuenta (archivo ignorado por Git):
 
 ```powershell
-# Alternativa A: solicitar las credenciales sin incluirlas en el historial.
-$env:JMETER_LOGIN_EMAIL = Read-Host 'Correo de la cuenta de prueba de la API'
-$securePassword = Read-Host 'Contraseña de la cuenta de prueba de la API' -AsSecureString
-$env:JMETER_LOGIN_PASSWORD = [System.Net.NetworkCredential]::new('', $securePassword).Password
-
-# Alternativa B: cargar performance\.env.local, archivo local ignorado por Git:
-# JMETER_LOGIN_EMAIL=...
-# JMETER_LOGIN_PASSWORD=...
-# Get-Content .\performance\.env.local | ForEach-Object {
-#   if ($_ -match '^\s*(JMETER_LOGIN_EMAIL|JMETER_LOGIN_PASSWORD)=(.*)$') {
-#     [Environment]::SetEnvironmentVariable($matches[1], $matches[2], 'Process')
-#   }
-# }
-
+# Confirmar que performance\.env.local contiene JMETER_LOGIN_EMAIL y
+# JMETER_LOGIN_PASSWORD, sin comillas, y que la contraseña no está en el historial.
 $env:JAVA_HOME = 'C:\Program Files\Eclipse Adoptium\jre-17.0.20.101-hotspot'
 $env:PATH = "$env:JAVA_HOME\bin;C:\Users\Jhoan\AppData\Local\Programs\JMeter\bin;$env:PATH"
 
 jmeter -n `
+  -q .\performance\.env.local `
   -t .\performance\apache-jmeter\veterinaria-api.jmx `
-  -Jhost=127.0.0.1 -Jport=3000 -Jprotocol=http `
+  -Jport=4500 `
   -Jusers=1 -Jrampup=1 -Jduration=60 `
   -l .\performance\results\baseline.jtl `
   -e -o .\performance\results\baseline-html
-
-Remove-Item Env:JMETER_LOGIN_EMAIL, Env:JMETER_LOGIN_PASSWORD
-Remove-Variable securePassword -ErrorAction SilentlyContinue
 ```
 
-Repetir cambiando `users`, `rampup`, `duration` y usando un nombre de salida distinto por escenario, por ejemplo `low.jtl`/`low-html` y `moderate.jtl`/`moderate-html`. Cada carpeta HTML debe ser nueva o estar vacía. No versionar resultados con datos sensibles.
+El host y el protocolo predeterminados son `127.0.0.1` y `http`; el puerto de desarrollo de este entorno es `4500`. Ajustar el puerto si la API se inicia en otro. Repetir cambiando `users`, `rampup`, `duration` y usando un nombre de salida distinto por escenario, por ejemplo `low.jtl`/`low-html` y `moderate.jtl`/`moderate-html`. Cada carpeta HTML debe ser nueva o estar vacía. No versionar resultados con datos sensibles.
 
 Para inspeccionar el plan en la interfaz gráfica, abrir el `.jmx`; las ejecuciones comparables deben realizarse en modo no gráfico para reducir la carga del generador. Si se usa un host distinto, el esquema HTTPS y el puerto deben corresponder a la instancia autorizada.
 

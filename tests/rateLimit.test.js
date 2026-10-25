@@ -23,4 +23,30 @@ describe('Límite de solicitudes de rutas de autenticación', () => {
       message: 'Demasiadas solicitudes. Intenta de nuevo más tarde.'
     });
   });
+
+  test('permite configurar un límite específico para el entorno de prueba', async () => {
+    const originalLimit = process.env.API_RATE_LIMIT_MAX;
+    process.env.API_RATE_LIMIT_MAX = '2';
+    jest.resetModules();
+
+    try {
+      const configuredApp = require('../src/app');
+      const responses = [];
+
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        responses.push(await request(configuredApp)
+          .post('/api/auth/login')
+          .send({ email: 'ana@example.com', password: 'incorrecta' }));
+      }
+
+      expect(responses.map(response => response.statusCode)).toEqual([401, 401, 429]);
+    } finally {
+      if (originalLimit === undefined) {
+        delete process.env.API_RATE_LIMIT_MAX;
+      } else {
+        process.env.API_RATE_LIMIT_MAX = originalLimit;
+      }
+      jest.resetModules();
+    }
+  });
 });

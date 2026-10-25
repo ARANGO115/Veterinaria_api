@@ -1,0 +1,35 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1792965042605,411,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,407,0,25
+1792965044053,94,GET /api/health,200,OK,Carga mixta: health y login 1-1,text,true,,1116,325,1,1,http://127.0.0.1:4500/api/health,94,0,0
+1792965045149,348,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,348,0,0
+1792965046500,91,GET /api/health,200,OK,Carga mixta: health y login 1-1,text,true,,1116,325,1,1,http://127.0.0.1:4500/api/health,91,0,0
+1792965047592,338,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,338,0,0
+1792965048931,91,GET /api/health,200,OK,Carga mixta: health y login 1-1,text,true,,1116,325,1,1,http://127.0.0.1:4500/api/health,91,0,0
+1792965050024,337,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,337,0,0
+1792965051364,92,GET /api/health,200,OK,Carga mixta: health y login 1-1,text,true,,1116,325,1,1,http://127.0.0.1:4500/api/health,92,0,0
+1792965052458,339,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,339,0,0
+1792965053799,92,GET /api/health,200,OK,Carga mixta: health y login 1-1,text,true,,1116,325,1,1,http://127.0.0.1:4500/api/health,92,0,0
+1792965054892,334,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,334,0,0
+1792965056232,91,GET /api/health,200,OK,Carga mixta: health y login 1-1,text,true,,1116,325,1,1,http://127.0.0.1:4500/api/health,91,0,0
+1792965057325,322,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,322,0,0
+1792965058648,1385,GET /api/health,200,OK,Carga mixta: health y login 1-1,text,true,,1116,325,1,1,http://127.0.0.1:4500/api/health,1385,0,0
+1792965061037,340,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,340,0,0
+1792965062378,91,GET /api/health,200,OK,Carga mixta: health y login 1-1,text,true,,1116,325,1,1,http://127.0.0.1:4500/api/health,91,0,0
+1792965063470,338,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,338,0,0
+1792965064810,91,GET /api/health,200,OK,Carga mixta: health y login 1-1,text,true,,1116,325,1,1,http://127.0.0.1:4500/api/health,91,0,0
+1792965065902,342,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,342,0,0
+1792965067247,91,GET /api/health,200,OK,Carga mixta: health y login 1-1,text,true,,1116,325,1,1,http://127.0.0.1:4500/api/health,91,0,0
+1792965068340,338,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,338,0,0
+1792965069679,91,GET /api/health,200,OK,Carga mixta: health y login 1-1,text,true,,1116,325,1,1,http://127.0.0.1:4500/api/health,91,0,0
+1792965070773,336,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,335,0,0
+1792965072110,92,GET /api/health,200,OK,Carga mixta: health y login 1-1,text,true,,1116,325,1,1,http://127.0.0.1:4500/api/health,92,0,0
+1792965073205,344,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,344,0,0
+1792965074550,91,GET /api/health,200,OK,Carga mixta: health y login 1-1,text,true,,1116,325,1,1,http://127.0.0.1:4500/api/health,91,0,0
+1792965075642,337,POST /api/auth/login,200,OK,Carga mixta: health y login 1-1,text,true,,1418,320,1,1,http://127.0.0.1:4500/api/auth/login,337,0,0
+1792965076981,29218,GET /api/health,500,Internal Server Error,Carga mixta: health y login 1-1,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[5]]]00
+
+****** comparison: [[[2]]]00
+
+/",1120,325,1,1,http://127.0.0.1:4500/api/health,29218,0,0
