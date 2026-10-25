@@ -17,6 +17,7 @@ describe('Servicio de autenticación', () => {
 
   test('el registro solo persiste los campos permitidos, no el rol del cliente', async () => {
     const save = jest.fn().mockResolvedValue();
+
     User.mockImplementation(function createUser(values) {
       Object.assign(this, values);
       this.id = 'user-123';
@@ -35,12 +36,15 @@ describe('Servicio de autenticación', () => {
       email: 'ana@example.com',
       password: 'una-clave-segura'
     });
+
     expect(save).toHaveBeenCalled();
+
     expect(result).toEqual({
       id: 'user-123',
       name: 'Ana Castro',
       email: 'ana@example.com'
     });
+
     expect(result).not.toHaveProperty('role');
     expect(result).not.toHaveProperty('password');
   });
@@ -48,12 +52,14 @@ describe('Servicio de autenticación', () => {
   test('autentica una contraseña válida y emite un JWT para el usuario', async () => {
     const password = 'una-clave-segura';
     const userId = '507f1f77bcf86cd799439011';
+
     const user = {
       id: userId,
       name: 'Ana Castro',
       email: 'ana@example.com',
       password: await bcrypt.hash(password, 4)
     };
+
     const select = jest.fn().mockResolvedValue(user);
     User.findOne.mockReturnValue({ select });
 
@@ -62,14 +68,20 @@ describe('Servicio de autenticación', () => {
       password
     });
 
-    expect(User.findOne).toHaveBeenCalledWith({ email: 'ana@example.com' });
+    expect(User.findOne).toHaveBeenCalledWith({
+      email: 'ana@example.com'
+    });
+
     expect(select).toHaveBeenCalledWith('+password');
+
     expect(jwt.verify(result.token, process.env.JWT_SECRET).sub).toBe(userId);
+
     expect(result.user).toEqual({
       id: userId,
       name: 'Ana Castro',
       email: 'ana@example.com'
     });
+
     expect(result.user).not.toHaveProperty('password');
   });
 
@@ -77,17 +89,46 @@ describe('Servicio de autenticación', () => {
     const select = jest.fn().mockResolvedValue({
       password: await bcrypt.hash('una-clave-segura', 4)
     });
+
     User.findOne.mockReturnValue({ select });
 
-    await expect(loginUser({
-      email: 'ana@example.com',
-      password: 'incorrecta'
-    })).resolves.toBeNull();
+    await expect(
+      loginUser({
+        email: 'ana@example.com',
+        password: 'incorrecta'
+      })
+    ).resolves.toBeNull();
 
     select.mockResolvedValue(null);
-    await expect(loginUser({
+
+    await expect(
+      loginUser({
+        email: 'ana@example.com',
+        password: 'una-clave-segura'
+      })
+    ).resolves.toBeNull();
+  });
+
+  test('lanza un error si JWT_SECRET no está configurado', async () => {
+    delete process.env.JWT_SECRET;
+
+    const password = 'una-clave-segura';
+
+    const user = {
+      id: '507f1f77bcf86cd799439011',
+      name: 'Ana Castro',
       email: 'ana@example.com',
-      password: 'una-clave-segura'
-    })).resolves.toBeNull();
+      password: await bcrypt.hash(password, 4)
+    };
+
+    const select = jest.fn().mockResolvedValue(user);
+    User.findOne.mockReturnValue({ select });
+
+    await expect(
+      loginUser({
+        email: 'ana@example.com',
+        password
+      })
+    ).rejects.toThrow('JWT_SECRET no está configurado');
   });
 });
