@@ -2,8 +2,18 @@ const jwt = require('jsonwebtoken');
 const { verifyToken } = require('../src/utils/jwt');
 
 describe('Validación de token JWT', () => {
+  const jwtSecretOriginal = process.env.JWT_SECRET;
+
   beforeEach(() => {
     process.env.JWT_SECRET = 'secreto-de-prueba';
+  });
+
+  afterAll(() => {
+    if (jwtSecretOriginal === undefined) {
+      delete process.env.JWT_SECRET;
+    } else {
+      process.env.JWT_SECRET = jwtSecretOriginal;
+    }
   });
 
   test('acepta un token válido', () => {
@@ -49,5 +59,13 @@ describe('Validación de token JWT', () => {
     );
 
     expect(() => verifyToken(token)).toThrow();
+  });
+
+  test('lanza un error cuando JWT_SECRET no está configurado', () => {
+    delete process.env.JWT_SECRET;
+
+    expect(() => verifyToken('token-de-prueba')).toThrow(
+      'JWT_SECRET no está configurado'
+    );
   });
 });
