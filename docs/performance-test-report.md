@@ -2,7 +2,7 @@
 
 ## Estado
 
-La API se conectó a Atlas y respondió `200` en `GET /api/health` en el puerto `4500`. La verificación fue de disponibilidad, no una ejecución de carga JMeter. Aún no se generaron archivos JTL ni métricas de rendimiento; no se presentan resultados ni conclusiones inventados.
+La API inició en el puerto `4500` y se conectó a Atlas. La solicitud manual sin token a `GET /api/health` respondió `401`, coherente con el middleware de autenticación actual. JMeter se validó para extraer el token del login y enviarlo al endpoint protegido, pero no se ejecutó carga. Aún no se generaron archivos JTL ni métricas de rendimiento; no se presentan resultados ni conclusiones inventados.
 
 ## Objetivo y alcance
 
@@ -48,4 +48,4 @@ Pendiente de resultados reales. No establecer límites de rendimiento arbitrario
 
 ## Limitaciones
 
-La prueba de carga aún requiere una cuenta dedicada de la aplicación para el endpoint de login, configurada localmente y sin compartir secretos. El usuario de MongoDB Atlas no es la cuenta de login de la aplicación. La comprobación de salud no caracteriza rendimiento bajo concurrencia. No se desactivó TLS. Aplican también las limitaciones de representatividad y dependencia del entorno descritas en la guía de ejecución. Documentar cualquier desviación del perfil propuesto o interrupción que afecte la comparación.
+La prueba de carga aún requiere una cuenta dedicada de la aplicación para el endpoint de login, configurada localmente y sin compartir secretos. El usuario de MongoDB Atlas no es la cuenta de login de la aplicación. La ruta de salud exige autenticación y el plan usa el token devuelto por el login. No se desactivó TLS. Aplican también las limitaciones de representatividad y dependencia del entorno descritas en la guía de ejecución. Documentar cualquier desviación del perfil propuesto o interrupción que afecte la comparación.

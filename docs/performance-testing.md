@@ -6,8 +6,8 @@ El plan `performance/apache-jmeter/veterinaria-api.jmx` ejercita estos endpoints
 
 | Endpoint          | Método | Propósito |
 | --- | ---       |-|
-| `/api/health`     | GET    | Medir la respuesta básica del servicio, sin modificar datos. |
-| `/api/auth/login` | POST   | Medir autenticación y consulta/verificación del usuario en MongoDB. |
+| `/api/auth/login` | POST   | Medir autenticación y consulta/verificación del usuario en MongoDB; el plan extrae el JWT de prueba. |
+| `/api/health`     | GET    | Medir la respuesta básica del servicio con el JWT recibido en el login. |
 
 No se incluye `POST /api/auth/register`: cada solicitud crea datos persistentes y sus resultados dependen del estado previo de la base de datos. El plan envía credenciales de una cuenta de prueba ya existente; no incluye credenciales reales ni crea usuarios.
 
@@ -36,7 +36,7 @@ Solo aumentar la carga después de revisar el resultado y confirmar que el entor
 ## Requisitos previos
 
 1. Instalar Apache JMeter 5.6.3 y Java. Si Java no se detecta automáticamente, definir `JAVA_HOME` a la carpeta de instalación antes de ejecutar JMeter.
-2. Iniciar la API con la configuración de base de datos del entorno controlado y confirmar que `GET /api/health` responde.
+2. Iniciar la API con la configuración de base de datos del entorno controlado y confirmar que la API está disponible. En esta versión, `GET /api/health` requiere un token Bearer, que el plan obtiene al iniciar sesión.
 3. Crear previamente una cuenta dedicada de prueba y comprobar que puede iniciar sesión.
 4. Configurar las variables locales `JMETER_LOGIN_EMAIL` y `JMETER_LOGIN_PASSWORD` para la cuenta de aplicación de prueba. El plan las lee del entorno del proceso; no se pasan como argumentos `-J` ni se guardan en el `.jmx`. No compartas la contraseña. El usuario de base de datos de Atlas no sustituye la cuenta de aplicación que se autentica en `/api/auth/login`.
 5. Crear una carpeta local para los artefactos de ejecución:
@@ -45,7 +45,7 @@ Solo aumentar la carga después de revisar el resultado y confirmar que el entor
 New-Item -ItemType Directory -Force .\performance\results | Out-Null
 ```
 
-Si la API no conecta con Atlas, verifica que el cluster esté activo, que la IP pública actual esté permitida en **Security > Network Access** y que el usuario de base de datos y la cadena de conexión correspondan al cluster. No desactives TLS para sortear errores de conexión.
+En Windows, el servidor obtiene automáticamente los DNS configurados en adaptadores activos para resolver los registros SRV/TXT de Atlas. No se requiere configurar DNS manualmente en el proyecto. Si la API no conecta con Atlas, verifica que el cluster esté activo, que la IP pública actual esté permitida en **Security > Network Access** y que el usuario de base de datos y la cadena de conexión correspondan al cluster. No desactives TLS para sortear errores de conexión.
 
 ## Ejecución
 
@@ -97,7 +97,7 @@ Comparar los escenarios con la misma configuración, credenciales y estado de en
 
 ## Limitaciones
 
-- El plan mide el comportamiento de una secuencia sintética de salud y login, no representa todas las operaciones ni la distribución real de tráfico.
+- El plan mide el comportamiento de una secuencia sintética de login y salud autenticada, no representa todas las operaciones ni la distribución real de tráfico.
 - Todos los usuarios virtuales usan la misma cuenta dedicada; el escenario no mide creación de cuentas ni diversidad de usuarios.
 - El resultado depende de la máquina generadora, red, base de datos, configuración y datos disponibles.
 - El plan no configura límites de aceptación. Conclusiones y recomendaciones deben basarse en resultados JTL reales.
