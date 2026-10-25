@@ -59,6 +59,7 @@ autenticación.
    NODE_ENV=development
    PORT=3000
    MONGODB_URI=mongodb+srv://USUARIO:CONTRASENA@cluster0.xxxxx.mongodb.net/veterinaria?retryWrites=true&w=majority&appName=Cluster0
+   MONGODB_DNS_SERVERS=
    JWT_SECRET=reemplazar-por-un-secreto-aleatorio-largo
    JWT_EXPIRES_IN=1h
    ```
@@ -75,6 +76,22 @@ raíz del proyecto y usa `.env` como alternativa. Las variables ya definidas en
 el sistema tienen prioridad sobre los valores del archivo. Los archivos de
 entorno reales están ignorados por Git; `.env.example` es la plantilla que se
 puede compartir. La API no empieza a escuchar hasta conectarse a MongoDB.
+
+Normalmente deja `MONGODB_DNS_SERVERS` vacío para usar el DNS del sistema. Si
+Node informa `ECONNREFUSED` al consultar `_mongodb._tcp`, configura esa variable
+con direcciones IP de DNS separadas por comas, autorizadas para tu red. Por
+ejemplo, si la red permite Google Public DNS:
+
+```dotenv
+MONGODB_DNS_SERVERS=8.8.8.8,8.8.4.4
+```
+
+La configuración se aplica al proceso Node antes de cargar Mongoose, por lo que
+también funciona con `npm run dev` y Nodemon. No configures `127.0.0.1` salvo
+que haya un servidor DNS local activo allí. Un DNS alternativo solo ayuda a
+resolver nombres; no evita restricciones de red, TLS, credenciales o acceso de
+Atlas. No fijes DNS públicos en el repositorio si la red de tu organización
+requiere resolvers propios.
 
 Si no conecta, verifica que el usuario de **Database Access** y su contraseña
 sean correctos, que la IP pública de salida esté permitida en **Network
