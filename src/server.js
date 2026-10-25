@@ -2,6 +2,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const dotenv = require('dotenv');
 
+require('node:dns').setServers(['8.8.8.8', '8.8.4.4']);
+
 const projectRoot = path.resolve(__dirname, '..');
 const environmentName = process.env.NODE_ENV || 'development';
 const environmentFile = `.env.${environmentName}`;
