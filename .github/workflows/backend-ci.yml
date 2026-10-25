@@ -1,0 +1,119 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - develop
+      - "SDGV-46-configurar-el-pipeline-de-ci-con-git-hub-actions"
+
+  pull_request:
+    branches:
+      - develop
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend-tests:
+    name: Jest y Newman
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'quit(db.adminCommand({ping:1}).ok ? 0 : 1)'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      NODE_ENV: test
+      PORT: 3000
+      MONGODB_URI: mongodb://127.0.0.1:27017/veterinaria_test
+      JWT_SECRET: ci-only-secret-for-tests
+      JWT_EXPIRES_IN: 1h
+      POSTMAN_COLLECTION: postman/veterinaria-auth.postman_collection.json
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar pruebas de Jest
+        run: npm test
+
+      - name: Validar la colección de Postman
+        shell: bash
+        run: |
+          if [[ ! -s "$POSTMAN_COLLECTION" ]]; then
+            echo "::error::No se encontró una colección de Postman no vacía en $POSTMAN_COLLECTION."
+            echo "Exporta la colección de Postman a esa ruta antes de ejecutar Newman."
+            exit 1
+          fi
+
+          if ! node -e "JSON.parse(require('node:fs').readFileSync(process.argv[1], 'utf8'))" "$POSTMAN_COLLECTION"; then
+            echo "::error::La colección de Postman no contiene JSON válido."
+            exit 1
+          fi
+
+      - name: Iniciar el backend y ejecutar Newman
+        shell: bash
+        run: |
+          npm start > server.log 2>&1 &
+          SERVER_PID=$!
+
+          cleanup() {
+            kill "$SERVER_PID" 2>/dev/null || true
+            wait "$SERVER_PID" 2>/dev/null || true
+          }
+
+          trap cleanup EXIT
+
+          READY=false
+
+          for attempt in $(seq 1 30); do
+            if curl --silent --show-error --output /dev/null \
+              --request POST \
+              --header "Content-Type: application/json" \
+              --data '{}' \
+              http://127.0.0.1:3000/api/auth/login; then
+              READY=true
+              echo "El backend está respondiendo."
+              break
+            fi
+
+            sleep 2
+          done
+
+          if [[ "$READY" != "true" ]]; then
+            echo "::error::El backend no inició correctamente."
+            cat server.log
+            exit 1
+          fi
+
+          npx newman run "$POSTMAN_COLLECTION" \
+            --env-var "baseUrl=http://127.0.0.1:3000" \
+            --reporters cli,junit \
+            --reporter-junit-export newman-results.xml
+
+      - name: Conservar el informe de Newman
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-results
+          path: newman-results.xml
+          if-no-files-found: ignore
+          retention-days: 7
