@@ -6,8 +6,11 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "jest --passWithNoTests",
-    "test:watch": "jest --watch"
+    "test": "jest --runInBand",
+    "test:unit": "jest --runInBand tests/authService.test.js tests/authMiddleware.test.js tests/jwt.test.js",
+    "test:integration": "jest --runInBand tests/auth.test.js tests/health.test.js",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --runInBand --coverage"
   },
   "repository": {
     "type": "git",

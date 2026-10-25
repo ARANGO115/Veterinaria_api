@@ -29,6 +29,14 @@ describe('GET /api/health', () => {
     });
   });
 
+  test('rechaza un esquema de autorización distinto de Bearer', async () => {
+    const response = await request(app)
+      .get('/api/health')
+      .set('Authorization', 'Basic token');
+
+    expect(response.statusCode).toBe(401);
+  });
+
   test('responde correctamente con un token válido', async () => {
     const token = jwt.sign({ sub: 'usuario123' }, process.env.JWT_SECRET, {
       expiresIn: '1h'
@@ -39,6 +47,9 @@ describe('GET /api/health', () => {
       .set('Authorization', `Bearer ${token}`);
 
     expect(response.statusCode).toBe(200);
-    expect(response.body.success).toBe(true);
+    expect(response.body).toEqual({
+      success: true,
+      message: 'Veterinaria API funcionando correctamente'
+    });
   });
 });

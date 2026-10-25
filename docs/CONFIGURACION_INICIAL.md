@@ -77,7 +77,17 @@ Para ejecutar Jest en modo observación:
 npm run test:watch
 ```
 
-Actualmente el repositorio cuenta con pruebas para el endpoint de salud de la API.
+La suite cubre autenticación y rutas protegidas. Las pruebas se ejecutan sin
+conexión a MongoDB porque aíslan el servicio y sus dependencias externas.
+
+Comandos disponibles:
+
+```bash
+npm test                 # suite completa
+npm run test:unit        # servicios, middleware y JWT
+npm run test:integration # registro, login y ruta protegida
+npm run test:ci          # suite completa con cobertura
+```
 
 ## 7. Estructura básica del proyecto
 
