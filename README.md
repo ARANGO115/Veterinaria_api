@@ -102,3 +102,10 @@ npm run test:ci
 La suite unitaria cubre `authService`, `authMiddleware` y la validación de
 tokens. La suite de integración cubre registro, inicio de sesión, validación
 de entradas y acceso protegido a `/api/health`.
+
+## Colección Postman
+
+La colección exportada de pruebas HTTP y su entorno local están disponibles
+en `postman/`. Consulta [docs/POSTMAN.md](docs/POSTMAN.md) para importar,
+configurar y ejecutar las solicitudes automatizadas de registro, login y
+rutas protegidas.
