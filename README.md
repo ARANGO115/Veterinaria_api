@@ -85,3 +85,17 @@ src/
 ```
 
 El endpoint `GET /api/health` sirve para verificar que la API esté activa.
+
+## Integración continua
+
+El workflow `.github/workflows/backend-ci.yml` ejecuta Jest en cada `push` a
+`develop` o a la rama de esta tarea, y en cada `pull_request` dirigido a
+`develop`. También puede iniciarse manualmente desde GitHub Actions. Usa Node.js
+22, instala dependencias con `npm ci` y levanta un servicio MongoDB efímero para
+las pruebas. Después inicia la API y ejecuta con Newman la colección
+`postman/veterinaria-auth.postman_collection.json`.
+
+La ejecución local de CI no requiere credenciales externas: MongoDB corre como
+servicio del workflow y el secreto JWT configurado allí es exclusivo para
+pruebas. La colección debe ser un archivo JSON válido y no vacío; de lo
+contrario, el workflow falla antes de ejecutar Newman.
