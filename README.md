@@ -49,19 +49,38 @@ expirado responden con `401`. Las rutas `/api/auth/register` y
 autenticación.
 ## Conectar con MongoDB Atlas
 
-1. En MongoDB Atlas, crea un usuario de base de datos y agrega la IP desde la que
-   se ejecutará la API en **Network Access**.
+1. En MongoDB Atlas, crea un usuario de base de datos en **Database Access** y
+   agrega la IP pública desde la que se ejecutará la API en **Network Access**.
 2. En el cluster, selecciona **Connect > Drivers** y copia la URI de conexión.
-3. Copia `.env.example` como `.env` (o `.env.development`) y reemplaza
-   `MONGODB_URI` con la URI real de Atlas. No compartas ni subas ese archivo.
-   Si la contraseña contiene caracteres especiales, codifícala para URL.
-4. Cambia `JWT_SECRET` por un secreto propio.
+3. Copia `.env.example` como `.env.development` en la raíz del proyecto y
+   reemplaza `MONGODB_URI` con la URI real de Atlas. La estructura esperada es:
+
+   ```dotenv
+   NODE_ENV=development
+   PORT=3000
+   MONGODB_URI=mongodb+srv://USUARIO:CONTRASENA@cluster0.xxxxx.mongodb.net/veterinaria?retryWrites=true&w=majority&appName=Cluster0
+   JWT_SECRET=reemplazar-por-un-secreto-aleatorio-largo
+   JWT_EXPIRES_IN=1h
+   ```
+
+   Reemplaza `USUARIO`, `CONTRASENA` y el host por los datos que proporciona
+   Atlas. Si la contraseña contiene caracteres reservados en URI (por ejemplo
+   `@`, `:`, `/` o `#`), codifícalos para URL. No agregues espacios alrededor
+   de `=` ni subas el archivo real `.env.development`.
+4. Usa un secreto JWT propio y aleatorio; no reutilices la contraseña de MongoDB.
 5. Instala las dependencias con `npm install` e inicia la API con `npm run dev`.
 
-La API busca `.env.<entorno>` (por defecto, `.env.development`) en la raíz del
-proyecto y usa `.env` como alternativa. Los archivos de entorno locales están
-ignorados por Git; `.env.example` es la plantilla que se puede compartir. La API
-se conecta a MongoDB antes de escuchar y muestra un error si falla la conexión.
+La API carga primero `.env.<entorno>` (por defecto, `.env.development`) desde la
+raíz del proyecto y usa `.env` como alternativa. Las variables ya definidas en
+el sistema tienen prioridad sobre los valores del archivo. Los archivos de
+entorno reales están ignorados por Git; `.env.example` es la plantilla que se
+puede compartir. La API no empieza a escuchar hasta conectarse a MongoDB.
+
+Si no conecta, verifica que el usuario de **Database Access** y su contraseña
+sean correctos, que la IP pública de salida esté permitida en **Network
+Access**, y que la red permita DNS SRV y conexiones TLS salientes al puerto
+27017. Un error TLS o de selección de servidores ocurre antes de autenticar al
+usuario y no se corrige cambiando `JWT_SECRET`.
 
 ## Estructura
 

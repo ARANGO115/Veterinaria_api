@@ -1,18 +1,4 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const dotenv = require('dotenv');
-
-const projectRoot = path.resolve(__dirname, '..');
-const environmentName = process.env.NODE_ENV || 'development';
-const environmentFile = `.env.${environmentName}`;
-const environmentPath = path.join(
-  projectRoot,
-  fs.existsSync(path.join(projectRoot, environmentFile))
-    ? environmentFile
-    : '.env'
-);
-
-dotenv.config({ path: environmentPath });
+require('./config/env')();
 
 const mongoose = require('mongoose');
 const app = require('./app');
@@ -51,7 +37,26 @@ const startServer = async () => {
     process.once('SIGINT', () => shutdown('SIGINT'));
     process.once('SIGTERM', () => shutdown('SIGTERM'));
   } catch (error) {
-    logger.error('No se pudo iniciar la API', error);
+    const connectionErrors = error.reason?.servers
+      ? [...error.reason.servers.entries()]
+        .map(([server, details]) => {
+          const cause = details.error;
+          return cause
+            ? `${server}: ${cause.name}${cause.code ? ` (${cause.code})` : ''}: ${cause.message}`
+            : null;
+        })
+        .filter(Boolean)
+      : [];
+
+    if (connectionErrors.length > 0) {
+      logger.error(
+        'No se pudo iniciar la API. Fallos al conectar con MongoDB:',
+        connectionErrors.join('; ')
+      );
+    } else {
+      logger.error('No se pudo iniciar la API', error);
+    }
+
     process.exitCode = 1;
   }
 };
