@@ -1,8 +1,6 @@
-require('./config/env')();
-
+const connectDB = require('./config/database');
 const mongoose = require('mongoose');
 const app = require('./app');
-const connectDB = require('./config/database');
 const logger = require('./utils/logger');
 
 const PORT = process.env.PORT || 3000;
