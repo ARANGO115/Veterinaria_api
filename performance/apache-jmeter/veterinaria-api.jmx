@@ -25,12 +25,12 @@
           </elementProp>
           <elementProp name="loginEmail" elementType="Argument">
             <stringProp name="Argument.name">loginEmail</stringProp>
-            <stringProp name="Argument.value">${__env(JMETER_LOGIN_EMAIL)}</stringProp>
+            <stringProp name="Argument.value">${__P(JMETER_LOGIN_EMAIL,)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="loginPassword" elementType="Argument">
             <stringProp name="Argument.name">loginPassword</stringProp>
-            <stringProp name="Argument.value">${__env(JMETER_LOGIN_PASSWORD)}</stringProp>
+            <stringProp name="Argument.value">${__P(JMETER_LOGIN_PASSWORD,)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
