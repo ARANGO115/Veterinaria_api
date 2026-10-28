@@ -1,3 +1,4 @@
+
 const errorHandler = (error, _req, res, _next) => {
   if (error.code === 11000) {
     return res.status(409).json({
@@ -25,7 +26,19 @@ const errorHandler = (error, _req, res, _next) => {
     });
   }
 
+  if (
+    Number.isInteger(error.statusCode) &&
+    error.statusCode >= 400 &&
+    error.statusCode < 500
+  ) {
+    return res.status(error.statusCode).json({
+      success: false,
+      message: error.message
+    });
+  }
+
   console.error('Error al procesar la solicitud:', error);
+
   return res.status(500).json({
     success: false,
     message: 'Ocurrió un error interno'

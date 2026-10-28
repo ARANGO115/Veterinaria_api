@@ -1,6 +1,7 @@
 const compression = require('compression');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 const express = require('express');
 const helmet = require('helmet');
@@ -47,6 +48,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/health', healthRoutes);
+app.use('/api/appointments', appointmentRoutes);
 
 app.use((req, res) => {
   res.status(404).json({
