@@ -47,6 +47,20 @@ Las solicitudes sin token, con un esquema distinto o con un token inválido o
 expirado responden con `401`. Las rutas `/api/auth/register` y
 `/api/auth/login` permanecen públicas para permitir el registro y la
 autenticación.
+
+## Mascotas
+
+Las operaciones de mascotas requieren un token JWT y siempre se limitan al
+usuario autenticado:
+
+- `POST /api/pets` registra una mascota. Requiere `name` y `species`; también
+  admite `breed`, `age`, `gender`, `weight`, `color`, `birthDate` y `notes`.
+- `GET /api/pets` consulta las mascotas del usuario autenticado.
+- `GET /api/pets/:id` consulta una mascota propia.
+- `PUT /api/pets/:id` actualiza los datos proporcionados de una mascota propia.
+
+Una mascota de otro usuario se trata como no encontrada y responde con `404`.
+
 ## Conectar con MongoDB Atlas
 
 1. En MongoDB Atlas, crea un usuario de base de datos en **Database Access** y
