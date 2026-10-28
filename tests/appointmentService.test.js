@@ -166,6 +166,30 @@ describe('appointmentService', () => {
       expect(result).toEqual(appointments);
     });
 
+    test('excluye las citas de mascotas que pertenecen a otros usuarios', async () => {
+      const ownPetId = new mongoose.Types.ObjectId();
+      const ownAppointments = [{ _id: appointmentId }];
+
+      Pet.find.mockReturnValue({
+        select: jest.fn().mockResolvedValue([
+          { _id: ownPetId }
+        ])
+      });
+
+      const populate = jest.fn().mockReturnThis();
+      const sort = jest.fn().mockResolvedValue(ownAppointments);
+
+      Appointment.find.mockReturnValue({ populate, sort });
+
+      const result = await getAppointments(userId);
+
+      expect(Pet.find).toHaveBeenCalledWith({ owner: userId });
+      expect(Appointment.find).toHaveBeenCalledWith({
+        pet: { $in: [ownPetId] }
+      });
+      expect(result).toEqual(ownAppointments);
+    });
+
     test('devuelve una lista vacía cuando no hay citas', async () => {
       Pet.find.mockReturnValue({
         select: jest.fn().mockResolvedValue([])
