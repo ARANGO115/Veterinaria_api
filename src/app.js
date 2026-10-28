@@ -8,6 +8,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const { rateLimit } = require('express-rate-limit');
 const healthRoutes = require('./routes/healthRoutes');
+const petRoutes = require('./routes/petRoutes');
 const logger = require('./utils/logger');
 
 const app = express();
@@ -49,6 +50,7 @@ if (process.env.NODE_ENV !== 'test') {
 app.use('/api/auth', authRoutes);
 app.use('/api/health', healthRoutes);
 app.use('/api/appointments', appointmentRoutes);
+app.use('/api/pets', petRoutes);
 
 app.use((req, res) => {
   res.status(404).json({
