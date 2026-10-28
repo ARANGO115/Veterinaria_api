@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 
 jest.mock('../src/models/Appointment', () => ({
@@ -292,6 +291,23 @@ describe('appointmentService', () => {
 
       expect(appointment.save).not.toHaveBeenCalled();
     });
+
+    test('rechaza reprogramar una cita de otro usuario', async () => {
+      const appointment = makeAppointment();
+
+      Appointment.findById.mockResolvedValue(appointment);
+      Pet.findById.mockResolvedValue(makePet(otherUserId));
+
+      await expect(
+        rescheduleAppointment(
+          appointmentId,
+          { date: futureDate(), time: '11:30' },
+          userId
+        )
+      ).rejects.toMatchObject({ statusCode: 404 });
+
+      expect(appointment.save).not.toHaveBeenCalled();
+    });
   });
 
   describe('cancelAppointment', () => {
@@ -316,6 +332,19 @@ describe('appointmentService', () => {
 
       await expect(cancelAppointment(appointmentId, userId))
         .rejects.toMatchObject({ statusCode: 400 });
+
+      expect(appointment.save).not.toHaveBeenCalled();
+    });
+
+    test('rechaza cancelar una cita de otro usuario', async () => {
+      const appointment = makeAppointment();
+
+      Appointment.findById.mockResolvedValue(appointment);
+      Pet.findById.mockResolvedValue(makePet(otherUserId));
+
+      await expect(
+        cancelAppointment(appointmentId, userId)
+      ).rejects.toMatchObject({ statusCode: 404 });
 
       expect(appointment.save).not.toHaveBeenCalled();
     });
