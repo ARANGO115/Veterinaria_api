@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 
 const petSchema = new mongoose.Schema({
@@ -11,7 +12,7 @@ const petSchema = new mongoose.Schema({
     type: String,
     required: [true, 'El nombre de la mascota es obligatorio'],
     trim: true,
-    minlength: [1, 'El nombre de la mascota no puede estar vacío'],
+    minlength: [2, 'El nombre debe tener al menos 2 caracteres'],
     maxlength: [100, 'El nombre de la mascota no puede superar los 100 caracteres']
   },
   species: {
@@ -23,6 +24,7 @@ const petSchema = new mongoose.Schema({
   breed: {
     type: String,
     trim: true,
+    default: '',
     maxlength: [100, 'La raza no puede superar los 100 caracteres']
   },
   age: {
@@ -43,7 +45,9 @@ const petSchema = new mongoose.Schema({
     trim: true,
     maxlength: [50, 'El color no puede superar los 50 caracteres']
   },
-  birthDate: Date,
+  birthDate: {
+    type: Date
+  },
   notes: {
     type: String,
     trim: true,
