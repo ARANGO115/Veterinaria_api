@@ -10,7 +10,7 @@ const {
 const create = async (req, res) => {
   const appointment = await createAppointment(
     req.body,
-    req.user.id
+    req.user.sub
   );
 
   return res.status(201).json({
@@ -21,7 +21,7 @@ const create = async (req, res) => {
 };
 
 const getAll = async (req, res) => {
-  const appointments = await getAppointments(req.user.id);
+  const appointments = await getAppointments(req.user.sub);
 
   return res.status(200).json({
     success: true,
@@ -32,7 +32,7 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
   const appointment = await getAppointmentById(
     req.params.id,
-    req.user.id
+    req.user.sub
   );
 
   return res.status(200).json({
@@ -45,7 +45,7 @@ const reschedule = async (req, res) => {
   const appointment = await rescheduleAppointment(
     req.params.id,
     req.body,
-    req.user.id
+    req.user.sub
   );
 
   return res.status(200).json({
@@ -58,7 +58,7 @@ const reschedule = async (req, res) => {
 const cancel = async (req, res) => {
   const appointment = await cancelAppointment(
     req.params.id,
-    req.user.id
+    req.user.sub
   );
 
   return res.status(200).json({

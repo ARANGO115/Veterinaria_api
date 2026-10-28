@@ -60,9 +60,7 @@ const authMiddleware = async (req, res, next) => {
     }
 
     // Se utiliza el usuario verificado en la base de datos.
-    req.user = {
-      id: user._id.toString()
-    };
+    req.user = payload;
 
     return next();
   } catch (error) {
