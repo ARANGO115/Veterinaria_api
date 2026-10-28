@@ -41,13 +41,26 @@ describe('Integración de endpoints de citas', () => {
     jest.clearAllMocks();
 
     verifyToken.mockReturnValue({ sub: userId });
-    User.findById.mockResolvedValue({ _id: new mongoose.Types.ObjectId(userId) });
+    User.findById.mockResolvedValue({
+      _id: new mongoose.Types.ObjectId(userId)
+    });
   });
 
   const authenticatedRequest = () => ({
-    get: (url) => request(app).get(url).set('Authorization', `Bearer ${token}`),
-    post: (url) => request(app).post(url).set('Authorization', `Bearer ${token}`),
-    patch: (url) => request(app).patch(url).set('Authorization', `Bearer ${token}`)
+    get: (url) =>
+      request(app)
+        .get(url)
+        .set('Authorization', `Bearer ${token}`),
+
+    post: (url) =>
+      request(app)
+        .post(url)
+        .set('Authorization', `Bearer ${token}`),
+
+    patch: (url) =>
+      request(app)
+        .patch(url)
+        .set('Authorization', `Bearer ${token}`)
   });
 
   test('rechaza consultar citas sin token', async () => {
@@ -56,6 +69,20 @@ describe('Integración de endpoints de citas', () => {
     expect(response.statusCode).toBe(401);
     expect(response.body.success).toBe(false);
     expect(getAppointments).not.toHaveBeenCalled();
+  });
+
+  test('rechaza crear una cita sin token', async () => {
+    const response = await request(app)
+      .post('/api/appointments')
+      .send({
+        pet: petId,
+        date: '2035-05-20',
+        time: '10:00'
+      });
+
+    expect(response.statusCode).toBe(401);
+    expect(response.body.success).toBe(false);
+    expect(createAppointment).not.toHaveBeenCalled();
   });
 
   test('rechaza un token inválido', async () => {
@@ -97,12 +124,19 @@ describe('Integración de endpoints de citas', () => {
 
   test('devuelve el error del servicio al crear una cita inválida', async () => {
     createAppointment.mockRejectedValue(
-      Object.assign(new Error('La fecha no es válida'), { statusCode: 400 })
+      Object.assign(
+        new Error('La fecha no es válida'),
+        { statusCode: 400 }
+      )
     );
 
     const response = await authenticatedRequest()
       .post('/api/appointments')
-      .send({ pet: petId, date: 'fecha-inválida', time: '10:00' });
+      .send({
+        pet: petId,
+        date: 'fecha-inválida',
+        time: '10:00'
+      });
 
     expect(response.statusCode).toBe(400);
     expect(response.body.success).toBe(false);
@@ -110,10 +144,15 @@ describe('Integración de endpoints de citas', () => {
 
   test('consulta las citas del usuario', async () => {
     getAppointments.mockResolvedValue([
-      { _id: appointmentId, pet: petId, time: '10:00' }
+      {
+        _id: appointmentId,
+        pet: petId,
+        time: '10:00'
+      }
     ]);
 
-    const response = await authenticatedRequest().get('/api/appointments');
+    const response = await authenticatedRequest()
+      .get('/api/appointments');
 
     expect(response.statusCode).toBe(200);
     expect(response.body.success).toBe(true);
@@ -124,7 +163,8 @@ describe('Integración de endpoints de citas', () => {
   test('devuelve una lista vacía si el usuario no tiene citas', async () => {
     getAppointments.mockResolvedValue([]);
 
-    const response = await authenticatedRequest().get('/api/appointments');
+    const response = await authenticatedRequest()
+      .get('/api/appointments');
 
     expect(response.statusCode).toBe(200);
     expect(response.body.data).toEqual([]);
@@ -142,12 +182,18 @@ describe('Integración de endpoints de citas', () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.body.data._id).toBe(appointmentId);
-    expect(getAppointmentById).toHaveBeenCalledWith(appointmentId, userId);
+    expect(getAppointmentById).toHaveBeenCalledWith(
+      appointmentId,
+      userId
+    );
   });
 
   test('devuelve 404 cuando el servicio rechaza el acceso a una cita ajena', async () => {
     getAppointmentById.mockRejectedValue(
-      Object.assign(new Error('La cita no existe'), { statusCode: 404 })
+      Object.assign(
+        new Error('La cita no existe'),
+        { statusCode: 404 }
+      )
     );
 
     const response = await authenticatedRequest()
@@ -158,7 +204,10 @@ describe('Integración de endpoints de citas', () => {
   });
 
   test('reprograma una cita y devuelve HTTP 200', async () => {
-    const body = { date: '2035-05-21', time: '11:30' };
+    const body = {
+      date: '2035-05-21',
+      time: '11:30'
+    };
 
     rescheduleAppointment.mockResolvedValue({
       _id: appointmentId,
@@ -181,12 +230,18 @@ describe('Integración de endpoints de citas', () => {
 
   test('devuelve error cuando falla la reprogramación', async () => {
     rescheduleAppointment.mockRejectedValue(
-      Object.assign(new Error('La fecha no es válida'), { statusCode: 400 })
+      Object.assign(
+        new Error('La fecha no es válida'),
+        { statusCode: 400 }
+      )
     );
 
     const response = await authenticatedRequest()
       .patch(`/api/appointments/${appointmentId}/reschedule`)
-      .send({ date: 'fecha-inválida', time: '10:00' });
+      .send({
+        date: 'fecha-inválida',
+        time: '10:00'
+      });
 
     expect(response.statusCode).toBe(400);
     expect(response.body.success).toBe(false);
@@ -203,12 +258,18 @@ describe('Integración de endpoints de citas', () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.body.data.status).toBe('cancelled');
-    expect(cancelAppointment).toHaveBeenCalledWith(appointmentId, userId);
+    expect(cancelAppointment).toHaveBeenCalledWith(
+      appointmentId,
+      userId
+    );
   });
 
   test('devuelve error cuando la cita ya está cancelada', async () => {
     cancelAppointment.mockRejectedValue(
-      Object.assign(new Error('La cita ya está cancelada'), { statusCode: 400 })
+      Object.assign(
+        new Error('La cita ya está cancelada'),
+        { statusCode: 400 }
+      )
     );
 
     const response = await authenticatedRequest()
