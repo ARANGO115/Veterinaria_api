@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 const User = require('../models/User');
 const { verifyToken } = require('../utils/jwt');
@@ -48,17 +49,23 @@ const authMiddleware = async (req, res, next) => {
     });
   }
 
-  const user = await User.findById(payload.sub);
+  try {
+    const user = await User.findById(payload.sub);
 
-  if (!user) {
-    return res.status(401).json({
-      success: false,
-      message: 'El token de autenticación no es válido o ha expirado'
-    });
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'El token de autenticación no es válido o ha expirado'
+      });
+    }
+
+    // Se utiliza el usuario verificado en la base de datos.
+    req.user = payload;
+
+    return next();
+  } catch (error) {
+    return next(error);
   }
-
-  req.user = payload;
-  return next();
 };
 
 module.exports = authMiddleware;
