@@ -6,6 +6,7 @@
 | Jira | [Tablero y backlog SDGV](https://arangovallejo.atlassian.net/jira/software/projects/SDGV/boards/3/backlog) |
 | Postman | [Colección y entorno compartidos](https://deividiazg5-8693917.postman.co/workspace/Deivi-Diaz%27s-Workspace~d0d8e4c3-27c8-4abe-82a6-0f588ca10247/environment/57606305-e41baa84-5ca5-479e-b6d1-ed35eed771dd?action=share&creator=57606305&active-environment=57606305-e41baa84-5ca5-479e-b6d1-ed35eed771dd) |
 | GitHub Actions | [Ejecuciones del pipeline CI](https://github.com/ARANGO115/Veterinaria_api/actions) |
+|Link video  | [Video](https://youtu.be/BFdC0KIGjwI) |
 
 ## Endpoints de la API
 
