@@ -17,7 +17,7 @@ protegida:
 5. Ajusta `baseUrl` si el backend no está en `http://localhost:3000`.
 6. Configura el backend con MongoDB y un `JWT_SECRET` local; no coloques esos
    secretos en la colección ni en el entorno exportado.
-7. Inicia la API con `npm start` o `npm run dev`.
+7. Desde `backend/`, inicia la API con `npm start` o `npm run dev`.
 
 ## Ejecución
 
@@ -68,6 +68,7 @@ Postman y Newman.
 
 Newman está declarado en `devDependencies`, por lo que `npm install` instala
 la versión reproducible usada por el proyecto. Los comandos disponibles son:
+Ejecuta los comandos desde `backend/`.
 
 ```bash
 npm run postman:run
@@ -97,8 +98,8 @@ npx newman run postman\Veterinaria-API.postman_collection.json `
 `postman:run:ci` agrega `--bail` para detenerse ante el primer fallo. Newman
 devuelve un código de salida distinto de cero cuando no puede conectarse al
 backend, falla una aserción o se produce un error de ejecución; esto permite
-que un pipeline futuro detecte la ejecución fallida. GitHub Actions queda
-fuera del alcance de esta tarea.
+que GitHub Actions detecte una ejecución fallida. El workflow está en
+`../../.github/workflows/backend-ci.yml`.
 
 La ejecución requiere que la API esté iniciada y que MongoDB Atlas permita la
 IP del equipo. `JWT_SECRET` y `MONGODB_URI` se configuran únicamente en el

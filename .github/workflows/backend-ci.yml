@@ -20,6 +20,9 @@ jobs:
   backend-tests:
     name: Jest y Newman
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
 
     services:
       mongodb:
@@ -49,6 +52,7 @@ jobs:
         with:
           node-version: "22"
           cache: npm
+          cache-dependency-path: backend/package-lock.json
 
       - name: Instalar dependencias
         run: npm ci
@@ -115,6 +119,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: newman-results
-          path: newman-results.xml
+          path: backend/newman-results.xml
           if-no-files-found: ignore
           retention-days: 7

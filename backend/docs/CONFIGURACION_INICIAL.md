@@ -21,6 +21,7 @@ Clonar el repositorio:
 ```bash
 git clone https://github.com/ARANGO115/Veterinaria_api.git
 cd Veterinaria_api
+cd backend
 ```
 
 Instalar las dependencias:
@@ -35,7 +36,8 @@ Este comando instala las dependencias definidas en `package.json`.
 
 El proyecto utiliza variables de entorno para configurar el servidor, la conexión con MongoDB y la autenticación mediante JWT.
 
-Utilizar `.env.example` como referencia y crear el archivo de entorno local correspondiente.
+Utilizar `.env.example` como referencia y crear `.env.development` dentro de
+`backend/`. Los comandos siguientes se ejecutan desde esa carpeta.
 
 ```env
 NODE_ENV=development
@@ -92,7 +94,7 @@ npm run test:ci          # suite completa con cobertura
 ## 7. Estructura básica del proyecto
 
 ```text
-Veterinaria_api/
+backend/
 ├── src/
 │   ├── config/
 │   ├── controllers/

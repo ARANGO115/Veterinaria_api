@@ -8,7 +8,7 @@ La validación contempla la ejecución correcta de las pruebas, la generación y
 
 ## 2. Ubicación del workflow
 
-El workflow se encuentra en:
+El workflow permanece en la raíz del repositorio:
 
 `.github/workflows/backend-ci.yml`
 
@@ -28,6 +28,7 @@ El entorno de integración continua utiliza:
 
 - Ubuntu como sistema operativo del runner.
 - Node.js 22.
+- Directorio de trabajo `backend/` para instalación, pruebas y ejecución.
 - Instalación de dependencias mediante `npm ci`.
 - MongoDB 7.0 como servicio de base de datos para las pruebas.
 - Jest para las pruebas automatizadas del backend.
@@ -151,6 +152,7 @@ La clave configurada en el workflow debe utilizarse únicamente para pruebas y n
 Para ejecutar las pruebas automatizadas:
 
 ```powershell
+cd backend
 npm ci
 npm test
 ```
@@ -161,7 +163,8 @@ Para ejecutar la colección de Newman contra un backend local que ya esté inici
 npx newman run postman/veterinaria-auth.postman_collection.json --env-var "baseUrl=http://127.0.0.1:3000"
 ```
 
-El puerto utilizado en el comando debe coincidir con el puerto donde está escuchando el backend.
+Ejecuta este comando desde `backend/`. El puerto utilizado debe coincidir con
+el puerto donde está escuchando el backend.
 
 Para ejecutar el pipeline completo en GitHub, se puede utilizar un `push` a una rama configurada o iniciar el workflow manualmente desde la pestaña **Actions**, siempre que el workflow esté disponible en la rama y la configuración de GitHub lo permita.
 

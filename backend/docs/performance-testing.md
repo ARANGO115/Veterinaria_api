@@ -52,7 +52,8 @@ Para ejecutar los tres perfiles propuestos (1 usuario/60 s, 5 usuarios/120 s y 1
 
 ## Ejecución
 
-Desde la raíz del repositorio, asegúrate de que `performance/.env.local` tenga las propiedades locales de la cuenta (archivo ignorado por Git):
+Desde `backend/`, asegúrate de que `performance/.env.local` tenga las propiedades
+locales de la cuenta (archivo ignorado por Git):
 
 ```powershell
 # Confirmar que performance\.env.local contiene JMETER_LOGIN_EMAIL y
