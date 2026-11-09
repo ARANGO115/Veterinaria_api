@@ -18,9 +18,6 @@ jobs:
   frontend-checks:
     name: Lint y build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
 
     steps:
       - name: Descargar el repositorio
@@ -35,9 +32,12 @@ jobs:
 
       - name: Instalar dependencias
         run: npm ci
+        working-directory: frontend
 
       - name: Validar estilo y reglas de React
         run: npm run lint
+        working-directory: frontend
 
       - name: Generar build de producción
         run: npm run build
+        working-directory: frontend
