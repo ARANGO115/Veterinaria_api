@@ -1,16 +1,65 @@
-# React + Vite
+# Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación React con Vite. El estado de autenticación se proporciona mediante
+`AuthProvider`, integrado en `src/main.jsx`, y se consume con `useAuth`.
 
-Currently, two official plugins are available:
+## Sesión
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Configura `VITE_API_URL` con la URL base de la API, incluido `/api`, para que el
+frontend pueda comunicarse con el backend. Por defecto se usa `/api` en el mismo
+origen; Vite no configura un proxy automáticamente. Por ejemplo, si el backend
+local está en el puerto 3000, inicia el frontend desde PowerShell con:
 
-## React Compiler
+```powershell
+cd frontend
+$env:VITE_API_URL = 'http://localhost:3000/api'
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Inicia también el backend y usa las credenciales de un usuario ya registrado.
+El servidor que publique el frontend debe devolver `index.html` para las rutas
+del navegador, como `/login` y `/privado`, al acceder directamente o recargar.
 
-## Expanding the ESLint configuration
+```jsx
+import { useAuth } from './auth/AuthContext'
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+function Ejemplo() {
+  const { user, status, error, login, logout, authFetch } = useAuth()
+  // login({ email, password }) devuelve el usuario o rechaza con un error.
+  // authFetch('/pets') agrega el token y devuelve la respuesta de fetch.
+}
+```
+
+Los estados son `checking`, `authenticated`, `anonymous` y `error`. El estado
+`error` significa que no se pudo verificar la sesión; `retrySession()` permite
+intentarlo nuevamente. El contexto rechaza el acceso mientras verifica la
+sesión, elimina tokens expirados y cierra la sesión cuando una petición hecha
+con `authFetch` responde `401`. La validación al recargar usa `GET /api/health`.
+No se descifra ni valida la firma del JWT en el navegador: esa validación la
+realiza el backend.
+
+La aplicación incluye `/login` y una página mínima en `/privado` para el flujo
+de sesión. Si se intenta acceder a `/privado` sin sesión válida, se redirige a
+`/login`; después del inicio de sesión se vuelve a la ruta solicitada.
+Mientras se verifica una sesión guardada, no se muestra el contenido privado.
+
+Para proteger otras rutas, intégralas con `PrivateAccess` o utiliza
+`ProtectedRoute` proporcionando los elementos de redirección y carga:
+
+```jsx
+import { ProtectedRoute } from './auth/ProtectedRoute'
+
+<ProtectedRoute fallback={<p>Inicia sesión para continuar.</p>} loading={<p>Verificando sesión...</p>}>
+  {/* Contenido privado */}
+</ProtectedRoute>
+```
+
+Cada ruta privada debe integrar `ProtectedRoute` y las solicitudes protegidas
+deben usar `authFetch`. El cierre de sesión elimina el token del navegador,
+pero el backend no ofrece revocación y el JWT sigue siendo válido hasta su
+expiración.
+
+La sesión se almacena en `localStorage` para sobrevivir recargas y cierres del
+navegador. Un script malicioso ejecutado en el origen puede leer el token;
+los datos del usuario almacenados tampoco deben considerarse una fuente de
+autorización. La API sigue siendo responsable de validar accesos.
