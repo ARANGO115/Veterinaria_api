@@ -55,6 +55,32 @@ body {
   min-width: 320px;
 }
 
+.session-nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.session-page {
+  padding: 1rem;
+}
+
+.session-form {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 24rem;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.session-form input,
+.session-form button,
+.session-page button {
+  font: inherit;
+}
+
 #root {
   width: 1126px;
   max-width: 100%;
