@@ -1,5 +1,5 @@
 
-jest.mock('../src/services/appointmentService', () => ({
+jest.mock('../../src/services/appointmentService', () => ({
   createAppointment: jest.fn(),
   getAppointments: jest.fn(),
   getAppointmentById: jest.fn(),
@@ -7,17 +7,17 @@ jest.mock('../src/services/appointmentService', () => ({
   cancelAppointment: jest.fn()
 }));
 
-jest.mock('../src/utils/jwt', () => ({
+jest.mock('../../src/utils/jwt', () => ({
   verifyToken: jest.fn()
 }));
 
-jest.mock('../src/models/User', () => ({
+jest.mock('../../src/models/User', () => ({
   findById: jest.fn()
 }));
 
 const request = require('supertest');
 const mongoose = require('mongoose');
-const app = require('../src/app');
+const app = require('../../src/app');
 
 const {
   createAppointment,
@@ -25,10 +25,10 @@ const {
   getAppointmentById,
   rescheduleAppointment,
   cancelAppointment
-} = require('../src/services/appointmentService');
+} = require('../../src/services/appointmentService');
 
-const { verifyToken } = require('../src/utils/jwt');
-const User = require('../src/models/User');
+const { verifyToken } = require('../../src/utils/jwt');
+const User = require('../../src/models/User');
 
 describe('Integración de endpoints de citas', () => {
   const userId = '507f1f77bcf86cd799439011';

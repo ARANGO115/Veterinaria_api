@@ -1,18 +1,18 @@
-jest.mock('../src/models/User', () => ({
+jest.mock('../../src/models/User', () => ({
   findById: jest.fn()
 }));
 
-jest.mock('../src/services/petService', () => ({
+jest.mock('../../src/services/petService', () => ({
   updatePet: jest.fn()
 }));
 
 const request = require('supertest');
 const jwt = require('jsonwebtoken');
-const User = require('../src/models/User');
-const { update } = require('../src/controllers/petController');
-const { updatePet } = require('../src/services/petService');
-const validatePet = require('../src/middlewares/validatePet');
-const app = require('../src/app');
+const User = require('../../src/models/User');
+const { update } = require('../../src/controllers/petController');
+const { updatePet } = require('../../src/services/petService');
+const validatePet = require('../../src/middlewares/validatePet');
+const app = require('../../src/app');
 
 const userId = '507f1f77bcf86cd799439011';
 const petId = '507f191e810c19729de860ea';

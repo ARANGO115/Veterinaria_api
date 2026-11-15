@@ -1,10 +1,10 @@
-jest.mock('../src/services/authService', () => ({
+jest.mock('../../src/services/authService', () => ({
   registerUser: jest.fn(),
   loginUser: jest.fn().mockResolvedValue(null)
 }));
 
 const request = require('supertest');
-const app = require('../src/app');
+const app = require('../../src/app');
 
 describe('Límite de solicitudes de rutas de autenticación', () => {
   test('limita solicitudes repetidas a rutas públicas de autenticación', async () => {
@@ -30,7 +30,7 @@ describe('Límite de solicitudes de rutas de autenticación', () => {
     jest.resetModules();
 
     try {
-      const configuredApp = require('../src/app');
+      const configuredApp = require('../../src/app');
       const responses = [];
 
       for (let attempt = 0; attempt < 3; attempt += 1) {

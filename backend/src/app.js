@@ -10,6 +10,8 @@ const { rateLimit } = require('express-rate-limit');
 const healthRoutes = require('./routes/healthRoutes');
 const petRoutes = require('./routes/petRoutes');
 const logger = require('./utils/logger');
+const swaggerUi = require('swagger-ui-express');
+const openApiDocument = require('./docs/openapi');
 
 const app = express();
 const apiRateLimitMax = process.env.API_RATE_LIMIT_MAX === undefined
@@ -38,6 +40,17 @@ app.use('/api', rateLimit({
 }));
 
 app.use(compression());
+
+app.use('/api-docs', helmet.contentSecurityPolicy({
+  directives: {
+    ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+    'script-src': ["'self'", "'unsafe-inline'"],
+    'style-src': ["'self'", "'unsafe-inline'"],
+    'img-src': ["'self'", 'data:']
+  }
+}));
+app.get('/api-docs.json', (_req, res) => res.json(openApiDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('dev', {

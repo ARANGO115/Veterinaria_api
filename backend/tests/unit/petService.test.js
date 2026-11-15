@@ -1,9 +1,9 @@
-jest.mock('../src/models/Pet', () => ({
+jest.mock('../../src/models/Pet', () => ({
   findOneAndUpdate: jest.fn()
 }));
 
-const Pet = require('../src/models/Pet');
-const { updatePet } = require('../src/services/petService');
+const Pet = require('../../src/models/Pet');
+const { updatePet } = require('../../src/services/petService');
 
 describe('petService.updatePet', () => {
   beforeEach(() => {

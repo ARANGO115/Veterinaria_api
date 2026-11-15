@@ -1,4 +1,4 @@
-jest.mock('../src/models/User', () => {
+jest.mock('../../src/models/User', () => {
   const User = jest.fn();
   User.findOne = jest.fn();
   return User;
@@ -6,8 +6,8 @@ jest.mock('../src/models/User', () => {
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../src/models/User');
-const { registerUser, loginUser } = require('../src/services/authService');
+const User = require('../../src/models/User');
+const { registerUser, loginUser } = require('../../src/services/authService');
 
 describe('Servicio de autenticación', () => {
   beforeEach(() => {

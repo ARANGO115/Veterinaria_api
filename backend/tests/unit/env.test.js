@@ -8,7 +8,7 @@ jest.mock('dotenv', () => ({
 
 const dns = require('node:dns');
 const dotenv = require('dotenv');
-const loadEnvironment = require('../src/config/env');
+const loadEnvironment = require('../../src/config/env');
 
 describe('Configuración del entorno y DNS', () => {
   const originalDnsServers = process.env.MONGODB_DNS_SERVERS;

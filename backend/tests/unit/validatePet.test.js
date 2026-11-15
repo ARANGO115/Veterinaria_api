@@ -1,4 +1,4 @@
-const validatePet = require('../src/middlewares/validatePet');
+const validatePet = require('../../src/middlewares/validatePet');
 
 const response = () => ({
   status: jest.fn().mockReturnThis(),

@@ -1,14 +1,14 @@
-jest.mock('../src/models/User', () => ({
+jest.mock('../../src/models/User', () => ({
   findById: jest.fn()
 }));
 
-jest.mock('../src/utils/jwt', () => ({
+jest.mock('../../src/utils/jwt', () => ({
   verifyToken: jest.fn()
 }));
 
-const User = require('../src/models/User');
-const authMiddleware = require('../src/middlewares/authMiddleware');
-const { verifyToken } = require('../src/utils/jwt');
+const User = require('../../src/models/User');
+const authMiddleware = require('../../src/middlewares/authMiddleware');
+const { verifyToken } = require('../../src/utils/jwt');
 
 const response = () => ({
   status: jest.fn().mockReturnThis(),

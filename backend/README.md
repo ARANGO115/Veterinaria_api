@@ -162,9 +162,17 @@ npm run test:integration
 npm run test:ci
 ```
 
-La suite unitaria cubre `authService`, `authMiddleware` y la validación de
-tokens. La suite de integración cubre registro, inicio de sesión, validación
-de entradas y acceso protegido a `/api/health`.
+Las pruebas unitarias están en `tests/unit/` y las pruebas de integración HTTP
+en `tests/integration/`. Cada comando ejecuta su carpeta correspondiente.
+
+## Swagger UI
+
+Con la API en ejecución, abre [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+para explorar y probar los endpoints. La especificación OpenAPI está disponible
+en [http://localhost:3000/api-docs.json](http://localhost:3000/api-docs.json).
+Para probar rutas protegidas, inicia sesión y usa el token JWT con **Authorize**
+en Swagger UI. La documentación interactiva no requiere autenticación, pero
+las rutas protegidas de la API siguen requiriendo un token.
 
 ## Colección Postman
 

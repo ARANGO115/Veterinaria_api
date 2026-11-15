@@ -1,9 +1,9 @@
-jest.mock('../src/models/Pet', () => ({
+jest.mock('../../src/models/Pet', () => ({
   find: jest.fn()
 }));
 
-const Pet = require('../src/models/Pet');
-const { getPetsByOwner } = require('../src/services/petService');
+const Pet = require('../../src/models/Pet');
+const { getPetsByOwner } = require('../../src/services/petService');
 
 describe('petService.getPetsByOwner', () => {
   beforeEach(() => {

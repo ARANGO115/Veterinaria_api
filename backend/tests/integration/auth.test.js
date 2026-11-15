@@ -1,11 +1,11 @@
-jest.mock('../src/services/authService', () => ({
+jest.mock('../../src/services/authService', () => ({
   registerUser: jest.fn(),
   loginUser: jest.fn()
 }));
 
 const request = require('supertest');
-const app = require('../src/app');
-const { registerUser, loginUser } = require('../src/services/authService');
+const app = require('../../src/app');
+const { registerUser, loginUser } = require('../../src/services/authService');
 
 describe('POST /api/auth/register', () => {
   beforeEach(() => {

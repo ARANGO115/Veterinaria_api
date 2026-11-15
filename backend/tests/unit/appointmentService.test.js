@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
 
-jest.mock('../src/models/Appointment', () => ({
+jest.mock('../../src/models/Appointment', () => ({
   findById: jest.fn(),
   find: jest.fn(),
   create: jest.fn()
 }));
 
-jest.mock('../src/models/Pet', () => ({
+jest.mock('../../src/models/Pet', () => ({
   findById: jest.fn(),
   find: jest.fn()
 }));
 
-const Appointment = require('../src/models/Appointment');
-const Pet = require('../src/models/Pet');
+const Appointment = require('../../src/models/Appointment');
+const Pet = require('../../src/models/Pet');
 
 const {
   createAppointment,
@@ -20,7 +20,7 @@ const {
   getAppointmentById,
   rescheduleAppointment,
   cancelAppointment
-} = require('../src/services/appointmentService');
+} = require('../../src/services/appointmentService');
 
 describe('appointmentService', () => {
   const userId = '507f1f77bcf86cd799439011';

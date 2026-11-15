@@ -2,7 +2,7 @@ const request = require('supertest');
 
 describe('Aplicación Express', () => {
 test('responde 404 cuando se solicita una ruta inexistente', async () => {
-const app = require('../src/app');
+const app = require('../../src/app');
 
 const response = await request(app)
   .get('/ruta-que-no-existe')
@@ -16,7 +16,7 @@ expect(response.body).toEqual({
 });
 
 test('maneja errores cuando se envía JSON malformado', async () => {
-const app = require('../src/app');
+const app = require('../../src/app');
 
 const response = await request(app)
   .post('/api/auth/login')
@@ -34,7 +34,7 @@ const entornoOriginal = process.env.NODE_ENV;
 
 jest.resetModules();
 
-jest.doMock('../src/utils/logger', () => ({
+jest.doMock('../../src/utils/logger', () => ({
   info: jest.fn(),
   error: jest.fn()
 }));
@@ -42,8 +42,8 @@ jest.doMock('../src/utils/logger', () => ({
 try {
   process.env.NODE_ENV = 'development';
 
-  const app = require('../src/app');
-  const logger = require('../src/utils/logger');
+  const app = require('../../src/app');
+  const logger = require('../../src/utils/logger');
 
   await request(app)
     .get('/ruta-para-probar-logs')
@@ -51,7 +51,7 @@ try {
 
   expect(logger.info).toHaveBeenCalled();
 } finally {
-  jest.dontMock('../src/utils/logger');
+  jest.dontMock('../../src/utils/logger');
   jest.resetModules();
 
   if (entornoOriginal === undefined) {

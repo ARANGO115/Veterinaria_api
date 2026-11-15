@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const User = require('../src/models/User');
+const User = require('../../src/models/User');
 
 describe('Modelo User', () => {
   const datosValidos = {

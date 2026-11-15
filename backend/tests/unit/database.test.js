@@ -3,7 +3,7 @@ jest.mock('mongoose', () => ({
 }));
 
 const mongoose = require('mongoose');
-const connectDB = require('../src/config/database');
+const connectDB = require('../../src/config/database');
 
 describe('Conexión con MongoDB', () => {
   const originalMongoUri = process.env.MONGODB_URI;
